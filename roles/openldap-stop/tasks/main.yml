@@ -1,0 +1,4 @@
+---
+- import_tasks: stop_ldap.yml
+  tags:
+    - stop:ldap

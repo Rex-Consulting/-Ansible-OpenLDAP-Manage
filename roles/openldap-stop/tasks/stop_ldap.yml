@@ -1,0 +1,35 @@
+---
+- name: Stop OpenLDAP
+  shell: |
+    slapd_pid=$(cat {{ item }})
+    echo "Stopping slapd process running as pid $slapd_pid"
+    sudo kill $slapd_pid
+  with_items: "{{ pid_file_paths }}"
+  register: result
+  tags:
+    - stop:openldap
+
+- name: Print config output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+  tags:
+    - never
+    - debug
+    - debug-stop:openldap
+
+- name: Stop CyrusSASL
+  environment: "{{ working_env }}"
+  shell: |
+    saslauthd_pid=$(cat {{ sasl_pid_path }})
+    echo "Stopping cyrus sasl process running as pid $saslauthd_pid"
+    sudo kill $saslauthd_pid
+  tags:
+    - stop:cyrussasl
+
+- name: Print config output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+  tags:
+    - never
+    - debug
+    - debug-stop:cyrussasl

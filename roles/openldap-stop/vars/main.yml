@@ -1,0 +1,5 @@
+openldap_install_dir: /appl/openldap/
+cyrussasl_install_dir: /appl/cyrus_sasl/
+pid_file_paths:
+  - "{{ openldap_install_dir }}/var/run/slapd.pid"
+sasl_pid_path: "{{ cyrussasl_install_dir }}/var/run/saslauthd.pid"

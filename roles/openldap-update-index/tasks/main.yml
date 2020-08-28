@@ -1,0 +1,4 @@
+---
+- import_tasks: update_index.yml
+  tags:
+    - update:index

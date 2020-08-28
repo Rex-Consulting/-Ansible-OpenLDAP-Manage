@@ -1,0 +1,29 @@
+ldap_user: ansible-adm
+ldap_group: ansible-adm
+openssl_install_dir: /appl/openssl/
+unixodbc_install_dir: /appl/unixodbc/
+cyrus_sasl_install_dir: /appl/cyrus_sasl/
+openldap_install_dir: /appl/openldap/
+cyrus_sasl_args: -a ldap -r -m {{ cyrus_sasl_install_dir }}/var/run -O {{ cyrus_sasl_install_dir }}/lib/sasl2/saslauthd.conf
+bindproxy_conf_path: {{ openldap_install_dir }}/etc/openldap/bindproxy.d
+bindproxy_args: -u {{ ldap_user }} -g {{ ldap_group }} -h ldapi://%2Fappl%2Fopenldap%2Fvar%2Frun%2Fldapi -F {{ bindproxy_conf_path }}
+openldap_args: -u {{ ldap_user }} -g {{ ldap_group }}
+instances:
+  host_1: 
+    olc:
+      - ["", "/appl/openldap/etc/openldap/slapd1.conf"]
+      - ["", "/appl/openldap/etc/openldap/slapd2.conf"]
+      - ["", "/appl/openldap/etc/openldap/slapd3.conf"]
+  host_2:
+    olc:
+      - ["", "/appl/openldap/etc/openldap/slapd1.conf"]
+      - ["", "/appl/openldap/etc/openldap/slapd2.conf"]
+      - ["", "/appl/openldap/etc/openldap/slapd3.conf"]
+working_env:
+  LD_LIBRARY_PATH: "{{ openssl_install_dir }}/lib:{{ cyrus_sasl_install_dir }}/lib:{{ unixodbc_install_dir }}/lib:{{ openldap_install_dir }}/lib:$LD_LIBRARY_PATH"
+  CC: gcc
+  CFLAGS: -O -g
+  CPPFLAGS: -I{{ openssl_install_dir }}/include -I{{ openssl_install_dir }}/include/openssl -I{{ unixodbc_install_dir }}/include -I{{ cyrus_sasl_install_dir }}/include -I{{ openldap_install_dir }}/include -I/usr/include
+  LDFLAGS: -L{{ openssl_install_dir }}/lib -L{{ unixodbc_install_dir }}/lib -L{{ cyrus_sasl_install_dir }}/lib -L{{ openldap_install_dir }}/lib -L/usr/lib
+  LIBS: -lpthread -ldl
+  LDAP_HOME: "{{ openldap_install_dir }}"

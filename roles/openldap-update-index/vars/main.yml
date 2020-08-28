@@ -1,0 +1,12 @@
+server_uri: localhost
+config_dn: cn=config
+updated_index_attrs:
+  - cn eq
+openldap_install_dir: /appl/openldap/
+stop_script_path: ~
+stop_script_name: stopldap.sh
+cnconfig_path: "{{ openldap_install_dir }}/etc/openldap/slapd.d"
+suffix_target: "dc=example,dc=com"
+openldap_sbin_path: "{{ openldap_install_dir }}/sbin"
+start_script_path: ~
+start_script_name: startldap.sh

@@ -1,0 +1,9 @@
+---
+- name: Start OpenLDAP using start scripts
+  shell: |
+    ./{{ script_name }}
+  args:
+    chdir: "{{ script_path }}"
+  register: result
+  tags:
+    - start:openldap:scripts

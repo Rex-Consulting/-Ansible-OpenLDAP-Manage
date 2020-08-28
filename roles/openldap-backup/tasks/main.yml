@@ -1,0 +1,4 @@
+---
+- import_tasks: backup_ldap.yml
+  tags:
+    - backup:ldap

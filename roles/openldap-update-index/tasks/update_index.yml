@@ -1,0 +1,57 @@
+---
+- name: Add new index values to OLC
+  ldap_attr: 
+    server_uri: "{{ server_uri }}"
+    dn: "{{ config_dn }}"
+    name: olcDbIndex
+    state: present
+    values: "{{ item }}"
+    bind_dn: "{{ bind_dn }}"
+    bind_pw: "{{ bind_pw }}"
+  with_items: "{{ updated_index_attrs }}"
+  register: result
+  tags:
+    - update:index
+
+- name: Print result
+  debug:
+    msg: "{{ result.stdout_lines }}"
+  tags:
+    - never
+    - debug
+    - debug:update:index
+
+- name: Stop OpenLDAP using stop scripts
+  shell: |
+    ./{{ stop_script_name }}
+  args:
+    chdir: "{{ stop_script_path }}"
+  register: result
+  tags:
+    - stop:openldap:scripts
+
+- name: Recreate index
+  shell: |
+    ./slapindex -F {{ cnconfig_path }} -v -b {{ suffix_target }}
+  args:
+    chdir: "{{ openldap_sbin_path }}"
+  register: result
+  tags:
+    - recreate:index
+
+- name: Print result
+  debug:
+    msg: "{{ result.stdout_lines }}"
+  tags:
+    - never
+    - debug
+    - debug:recreate:index
+
+- name: Start OpenLDAP using start scripts
+  shell: |
+    ./{{ start_script_name }}
+  args:
+    chdir: "{{ start_script_path }}"
+  register: result
+  tags:
+    - start:openldap:scripts

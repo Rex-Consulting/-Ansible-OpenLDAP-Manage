@@ -1,0 +1,22 @@
+---
+- name: Start bindproxy
+  environment: "{{ working_env }}"
+  shell: |
+    sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH {{ openldap_install_dir }}/libexec/slapd {{ bind_proxy_args }}
+  tags:
+    - start:bindproxy
+
+- name: Start CyrusSASL
+  environment: "{{ working_env }}"
+  shell: |
+    sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH {{ cyrus_sasl_install_dir }}/sbin/saslauthd {{ cyrus_sasl_args }}
+  tags:
+    - start:cyrussasl
+
+- name: Start slapd instances
+  environment: "{{ working_env }}"
+  shell: |
+    sudo {{ openldap_install_dir }}/libexec/slapd {{ openldap_args }} h {{ item[0] }} -F {{ item[1] }}
+  with_items: "{{ instances[inventory_hostname]['olc'] }}"
+  tags:
+    - start:openldap     

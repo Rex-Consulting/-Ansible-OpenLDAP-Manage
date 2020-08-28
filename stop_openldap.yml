@@ -1,0 +1,6 @@
+---
+# Configure environment for your OpenLDAP server
+- hosts: all
+  roles: 
+    - stop-openldap
+    - stop-openldap-scripts
