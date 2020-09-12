@@ -2,7 +2,7 @@
 - name: Create slapd db config backups
   environment: "{{ working_env }}"
   shell: |
-    "{{ slapcat_path }} -n {{ item[0] }} -F {{ item[1] }} -l {{ backup_dir_path }}/{{ item[2] }}.ldif > {{ backup_dir_path }}/{{ item[2] }}.out 2> {{ backup_dir_path }}/{{ item[2] }}.err"
+    "{{ slapcat_path }}" -n "{{ item.index }}" -F "{{ item.config_path }}" -l "{{ backup_dir_path_ldif }}/{{ item.backup_name }}.ldif" > "{{ backup_dir_path }}/{{ item.backup_name }}.out" 2> "{{ backup_dir_path }}/{{ item.backup_name }}.err"
   with_items: "{{ backup_targets_config }}"
   tags:
     - backup:ldap
@@ -10,7 +10,7 @@
 - name: Create slapd db data backups
   environment: "{{ working_env }}"
   shell: |
-    "{{ slapcat_path }} -n {{ item[0] }} -F {{ item[1] }} -l {{ backup_dir_path }}/{{ item[2] }}.ldif > {{ backup_dir_path }}/{{ item[2] }}.out 2> {{ backup_dir_path }}/{{ item[2] }}.err"
+    "{{ slapcat_path }}" -n "{{ item.index }}" -F "{{ item.config_path }}" -l "{{ backup_dir_path_ldif }}/{{ item.backup_name }}.ldif" > "{{ backup_dir_path }}/{{ item.backup_name }}.out" 2> "{{ backup_dir_path }}/{{ item.backup_name }}.err"
   with_items: "{{ backup_targets_data }}"
   tags:
     - backup:ldap
@@ -18,7 +18,7 @@
 - name: Zip data
   environment: "{{ working_env }}"
   shell: |
-    zip {{ backup_dir_path }}/{{ item[2] }}.$(date -d "today" +"%Y%m%d%H%M").zip {{ backup_dir_path }}/{{ item[2] }}.ldif > {{ backup_dir_path }}/zip.out 2> {{ backup_dir_path }}/zip.err
+    /bin/zip {{ backup_dir_path_ldif }}/{{ item.backup_name }}$(/bin/date -d 'today' +'%Y%m%d%H%M').zip {{ backup_dir_path_ldif }}/{{ item.backup_name }}.ldif > {{ backup_dir_path }}/zip.out 2> {{ backup_dir_path }}/zip.err
   with_items: "{{ backup_targets_data }}"
   tags:
     - backup:zip
@@ -26,8 +26,8 @@
 - name: Cleanup old files
   environment: "{{ working_env }}"
   shell: |
-    rm -f {{ backup_dir_path }}/{{ item[2] }}.ldif
-    find {{ backup_dir_path}} -name "*.zip" -mtime +14 | xargs rm -rf 
+    /bin/rm -f {{ backup_dir_path_ldif }}/{{ item.backup_name }}.ldif
+    /bin/find {{ backup_dir_path_ldif }} -name "*.zip" -mtime +14 | /bin/xargs /bin/rm -rf 
   with_items: "{{ backup_targets_data }}"
   tags:
     - backup:cleanup

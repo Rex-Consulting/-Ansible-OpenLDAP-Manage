@@ -2,4 +2,4 @@
 # Configure environment for your OpenLDAP server
 - hosts: all
   roles: 
-    - backup-openldap
+    - openldap-backup

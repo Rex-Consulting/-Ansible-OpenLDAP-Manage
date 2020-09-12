@@ -3,12 +3,13 @@ cyrus_sasl_install_dir: /appl/openldap/
 unixodbc_install_dir: /appl/openldap/
 openssl_install_dir: /appl/openldap/
 backup_dir_path: /appl/backup/
-slapcat_path: {{ openldap_install_dir }}/sbin/slapcat
+backup_dir_path_ldif: /appl/backup/openldap
+slapcat_path: "{{ openldap_install_dir }}/sbin/slapcat"
 backup_targets_config:
-  - ["0", "/appl/openldap/etc/openldap/slapd.d", "slapd.d"]
-  - ["0", "/appl/openldap/etc/openldap/bindproxy.d", "bindproxy.d"]
+  - {index: "0", config_path: "/appl/openldap/etc/openldap/slapd.d", backup_name: "slapd.d"}
+  #- {index: "0", config_path: "/appl/openldap/etc/openldap/bindproxy.d", backup_name: "bindproxy.d"}
 backup_targets_data:
-  - ["1", "/appl/openldap/etc/openldap/slapd.d", "data"]
+  - {index: "1", config_path: "/appl/openldap/etc/openldap/slapd.d", backup_name: "data"}
 working_env:
   PATH: "$PATH:$HOME/bin"
   LD_LIBRARY_PATH: "{{ openssl_install_dir }}/lib:{{ cyrus_sasl_install_dir }}/lib:{{ unixodbc_install_dir }}/lib:{{ openldap_install_dir }}/lib:$LD_LIBRARY_PATH"
